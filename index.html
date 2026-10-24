@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tango | Video</title>
+  <style>
+    :root {
+      --bg: #0f0f23;
+      --bg-2: #171a2f;
+      --panel: rgba(25, 29, 52, 0.9);
+      --panel-2: rgba(18, 20, 35, 0.9);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #ecf1ff;
+      --muted: #b8bfdb;
+      --pink: #ff7ae6;
+      --pink-2: #ff4fd8;
+      --purple: #9155ff;
+      --purple-2: #5b73ff;
+      --green: #3dd8a3;
+      --red: #ff5f7a;
+      --shadow: 0 25px 60px rgba(17, 15, 35, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top center, rgba(145, 85, 255, 0.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 122, 230, 0.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: min(1100px, 100%);
+      min-height: 780px;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 760px;
+      border-radius: 28px;
+      background: rgba(15, 15, 35, 0.78);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Login */
+    #loginScreen {
+      display: none;
+      min-height: 760px;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255, 122, 230, 0.18), transparent 26%),
+        radial-gradient(circle at 30% 85%, rgba(91, 115, 255, 0.16), transparent 28%),
+        rgba(12, 13, 25, 0.9);
+      padding: 40px 18px;
+    }
+
+    #loginScreen.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-card {
+      width: min(100%, 420px);
+      padding: 30px 24px 26px;
+      background: rgba(24, 27, 45, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 26px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    .logo {
+      width: 84px;
+      height: 84px;
+      border-radius: 22px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 20px 40px rgba(255, 79, 216, 0.35);
+    }
+
+    .auth-card h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.5rem);
+      letter-spacing: -0.04em;
+    }
+
+    .auth-card p {
+      margin: 10px 0 22px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .email-field {
+      width: 100%;
+      padding: 16px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(13, 15, 28, 0.9);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .email-field:focus {
+      border-color: rgba(255, 122, 230, 0.8);
+      box-shadow: 0 0 0 4px rgba(255, 122, 230, 0.15);
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .warning-btn,
+    .plan-btn,
+    .whatsapp-btn {
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 700;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .danger-btn:hover,
+    .warning-btn:hover,
+    .plan-btn:hover,
+    .whatsapp-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 18px;
+      padding: 16px 18px;
+      font-size: 1.05rem;
+      color: #1c1026;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 16px 28px rgba(255, 79, 216, 0.3);
+    }
+
+    /* Main app */
+    #videoScreen {
+      padding: 18px 18px 20px;
+      display: none;
+    }
+
+    #videoScreen.active {
+      display: block;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 8px 8px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.02rem;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(145, 85, 255, 0.45);
+    }
+
+    .trial-badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(61, 216, 163, 0.14);
+      border: 1px solid rgba(61, 216, 163, 0.28);
+      color: #b8fee6;
+      font-size: 0.9rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .trial-badge.warning {
+      background: rgba(255, 95, 122, 0.12);
+      border-color: rgba(255, 95, 122, 0.3);
+      color: #ffd3dc;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .video-card {
+      position: relative;
+      min-height: 420px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18, 20, 35, 0.9), rgba(11, 12, 20, 0.9));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .video-card .label {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 2;
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      border-radius: 999px;
+      background: rgba(15, 15, 35, 0.75);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background:
+        linear-gradient(180deg, rgba(22, 22, 34, 0.8), rgba(10, 10, 18, 0.95)),
+        linear-gradient(135deg, rgba(145, 85, 255, 0.14), rgba(255, 122, 230, 0.12));
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 22px auto 16px;
+      max-width: 760px;
+    }
+
+    .secondary-btn,
+    .warning-btn,
+    .danger-btn {
+      padding: 14px 18px;
+      min-width: 120px;
+      color: var(--text);
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .warning-btn {
+      background: rgba(255, 161, 79, 0.09);
+      border-color: rgba(255, 161, 79, 0.25);
+      color: #ffd7a1;
+    }
+
+    .danger-btn {
+      background: rgba(255, 95, 122, 0.1);
+      border-color: rgba(255, 95, 122, 0.28);
+      color: #ffc1cc;
+    }
+
+    .primary-btn.small {
+      width: auto;
+      min-width: 140px;
+      margin-top: 0;
+      padding: 14px 18px;
+      font-size: 0.96rem;
+    }
+
+    .code-panel {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(11, 12, 21, 0.85);
+      color: var(--text);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    textarea::placeholder {
+      color: rgba(236, 241, 255, 0.55);
+    }
+
+    /* Paywall */
+    #paywallScreen {
+      display: none;
+      padding: 26px 18px;
+    }
+
+    #paywallScreen.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .paywall-card {
+      width: min(100%, 1020px);
+      padding: 24px 18px 18px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(25, 29, 52, 0.9), rgba(17, 18, 31, 0.95));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .paywall-card h2 {
+      margin: 10px 0 8px;
+      font-size: clamp(2rem, 3vw, 2.7rem);
+      letter-spacing: -0.05em;
+    }
+
+    .paywall-card > p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .plan {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 22px;
+      padding: 18px 16px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(13, 15, 27, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan.featured {
+      border-color: rgba(255, 122, 230, 0.45);
+      background: linear-gradient(180deg, rgba(41, 26, 52, 0.9), rgba(13, 15, 27, 0.9));
+      box-shadow: 0 18px 36px rgba(255, 122, 230, 0.12);
+    }
+
+    .plan-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      background: rgba(255, 122, 230, 0.16);
+      color: #ffd3f6;
+      border: 1px solid rgba(255, 122, 230, 0.32);
+    }
+
+    .plan h3 {
+      margin: 20px 0 10px;
+      font-size: 1.42rem;
+    }
+
+    .plan .price {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .plan .price span {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .plan .desc {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .plan-btn,
+    .whatsapp-btn {
+      width: 100%;
+      padding: 13px 14px;
+      font-size: 0.96rem;
+      margin-top: 8px;
+    }
+
+    .plan-btn {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #1f1226;
+    }
+
+    .whatsapp-btn {
+      background: rgba(77, 214, 132, 0.14);
+      border: 1px solid rgba(77, 214, 132, 0.25);
+      color: #c8ffdd;
+    }
+
+    @media (max-width: 820px) {
+      .video-grid,
+      .plans {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .trial-badge {
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 12px;
+      }
+
+      .screen {
+        min-height: 100%;
+      }
+
+      .auth-card {
+        padding: 24px 18px 20px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .controls .primary-btn.small,
+      .controls .secondary-btn,
+      .controls .warning-btn,
+      .controls .danger-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section id="loginScreen" class="screen active">
+      <div class="auth-card">
+        <div class="logo">T</div>
+        <h1>Bienvenido</h1>
+        <p>Accede a tu sesión para empezar la llamada</p>
+
+        <form id="loginForm">
+          <input
+            id="emailInput"
+            class="email-field"
+            type="email"
+            placeholder="tucorreo@gmail.com"
+            autocomplete="email"
+            required
+          />
+          <button class="primary-btn" type="submit">Continuar</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="videoScreen" class="screen">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">T</span>
+          <span>Tango</span>
+        </div>
+        <div id="trialBadge" class="trial-badge">Te quedan 90 dias gratis</div>
+      </header>
+
+      <div class="video-grid">
+        <div class="video-card">
+          <span class="label">Tu video</span>
+          <video id="localVideo" autoplay muted playsinline></video>
+        </div>
+
+        <div class="video-card">
+          <span class="label">Contacto</span>
+          <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="cameraBtn" class="secondary-btn" type="button">Iniciar Camara</button>
+        <button id="createCodeBtn" class="primary-btn small" type="button">Crear Codigo</button>
+        <button id="joinBtn" class="primary-btn small" type="button">Unirse</button>
+        <button id="muteBtn" class="warning-btn" type="button">Mute</button>
+        <button id="hangupBtn" class="danger-btn" type="button">Colgar</button>
+      </div>
+
+      <div class="code-panel">
+        <textarea
+          id="peerCode"
+          placeholder="Pega o copia el JSON del offer/answer de la videollamada aquí..."
+        ></textarea>
+      </div>
+    </section>
+
+    <section id="paywallScreen" class="screen">
+      <div class="paywall-card">
+        <div class="logo">T</div>
+        <h2>Tu prueba ha terminado</h2>
+        <p>Elige un plan para seguir usando Tango sin interrupciones.</p>
+
+        <div class="plans">
+          <article class="plan">
+            <h3>Mensual</h3>
+            <div class="price">$2 <span>USD</span></div>
+            <p class="desc">Pago mensual con acceso completo.</p>
+            <button class="plan-btn" data-plan="Mensual" data-price="2" type="button">Pagar Ahora</button>
+            <button class="whatsapp-btn" data-plan="Mensual" type="button">Pagar por WhatsApp</button>
+          </article>
+
+          <article class="plan featured">
+            <div class="plan-badge">Mejor valor</div>
+            <h3>6 Meses</h3>
+            <div class="price">$3 <span>USD</span></div>
+            <p class="desc">La mejor opción para mantener tu rutina y ahorrar.</p>
+            <button class="plan-btn" data-plan="6 Meses" data-price="3" type="button">Pagar Ahora</button>
+            <button class="whatsapp-btn" data-plan="6 Meses" type="button">Pagar por WhatsApp</button>
+          </article>
+
+          <article class="plan">
+            <h3>De por vida</h3>
+            <div class="price">$10 <span>USD</span></div>
+            <p class="desc">Acceso permanente para siempre.</p>
+            <button class="plan-btn" data-plan="De por vida" data-price="10" type="button">Pagar Ahora</button>
+            <button class="whatsapp-btn" data-plan="De por vida" type="button">Pagar por WhatsApp</button>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE = {
+      EMAIL: "tango_email",
+      FIRST_LOGIN: "tango_first_login",
+      PAID: "tango_paid",
+      PLAN: "tango_plan"
+    };
+
+    const TRIAL_DAYS = 90;
+
+    const loginScreen = document.getElementById("loginScreen");
+    const videoScreen = document.getElementById("videoScreen");
+    const paywallScreen = document.getElementById("paywallScreen");
+    const trialBadge = document.getElementById("trialBadge");
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("emailInput");
+
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+    const peerCode = document.getElementById("peerCode");
+
+    let localStream = null;
+    let peerConnection = null;
+    let isMuted = false;
+
+    function showScreen(name) {
+      loginScreen.classList.remove("active");
+      videoScreen.classList.remove("active");
+      paywallScreen.classList.remove("active");
+
+      if (name === "login") loginScreen.classList.add("active");
+      if (name === "video") videoScreen.classList.add("active");
+      if (name === "paywall") paywallScreen.classList.add("active");
+    }
+
+    function getFirstLoginDate() {
+      const value = localStorage.getItem(STORAGE.FIRST_LOGIN);
+      return value ? new Date(value) : null;
+    }
+
+    function setFirstLoginIfNeeded() {
+      if (!localStorage.getItem(STORAGE.FIRST_LOGIN)) {
+        localStorage.setItem(STORAGE.FIRST_LOGIN, new Date().toISOString());
+      }
+    }
+
+    function getDaysLeft() {
+      const firstLogin = getFirstLoginDate();
+      if (!firstLogin) return TRIAL_DAYS;
+      const today = new Date();
+      const diffMs = today.getTime() - firstLogin.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      return Math.max(0, TRIAL_DAYS - diffDays);
+    }
+
+    function isPaid() {
+      return localStorage.getItem(STORAGE.PAID) === "true";
+    }
+
+    function updateTrialBadge() {
+      const daysLeft = getDaysLeft();
+      if (isPaid()) {
+        trialBadge.textContent = "Plan activo";
+        trialBadge.classList.remove("warning");
+        return;
+      }
+
+      if (daysLeft > 0) {
+        trialBadge.textContent = `Te quedan ${daysLeft} dias gratis`;
+        trialBadge.classList.remove("warning");
+      } else {
+        trialBadge.textContent = "Tu prueba terminó";
+        trialBadge.classList.add("warning");
+      }
+    }
+
+    function renderApp() {
+      const email = localStorage.getItem(STORAGE.EMAIL);
+
+      if (!email) {
+        showScreen("login");
+        return;
+      }
+
+      if (!isPaid() && getDaysLeft() <= 0) {
+        showScreen("paywall");
+        return;
+      }
+
+      showScreen("video");
+      updateTrialBadge();
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = emailInput.value.trim();
+      if (!email || !email.includes("@")) {
+        alert("Ingresa un correo válido.");
+        emailInput.focus();
+        return;
+      }
+
+      localStorage.setItem(STORAGE.EMAIL, email);
+      setFirstLoginIfNeeded();
+      renderApp();
+    }
+
+    loginForm.addEventListener("submit", handleLogin);
+
+    function openWhatsApp(plan) {
+      const message = encodeURIComponent(`Hola, quiero pagar el plan ${plan}.`);
+      const url = `https://wa.me/5218112345678?text=${message}`;
+      window.open(url, "_blank");
+    }
+
+    document.querySelectorAll(".plan-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const plan = button.dataset.plan;
+        localStorage.setItem(STORAGE.PAID, "true");
+        localStorage.setItem(STORAGE.PLAN, plan);
+        renderApp();
+      });
+    });
+
+    document.querySelectorAll(".whatsapp-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const plan = button.dataset.plan || "plan";
+        openWhatsApp(plan);
+      });
+    });
+
+    function ensurePeerConnection() {
+      if (peerConnection) return peerConnection;
+
+      peerConnection = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      });
+
+      peerConnection.ontrack = (event) => {
+        const [stream] = event.streams;
+        if (stream) remoteVideo.srcObject = stream;
+      };
+
+      peerConnection.onicecandidate = (event) => {
+        if (!event.candidate) return;
+      };
+
+      return peerConnection;
+    }
+
+    async function startCamera() {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error("Tu navegador no soporta cámara.");
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+
+        localStream = stream;
+        localVideo.srcObject = stream;
+
+        const pc = ensurePeerConnection();
+        stream.getTracks().forEach((track) => {
+          const alreadyAdded = pc.getSenders().some((sender) => sender.track === track);
+          if (!alreadyAdded) {
+            pc.addTrack(track, stream);
+          }
+        });
+
+      } catch (error) {
+        alert("No se pudo acceder a la cámara. Asegúrate de permitir el uso de cámara y micrófono.");
+      }
+    }
+
+    async function createCode() {
+      await startCamera();
+      const pc = ensurePeerConnection();
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      const payload = {
+        type: "offer",
+        sdp: offer.sdp
+      };
+
+      peerCode.value = JSON.stringify(payload, null, 2);
+    }
+
+    async function joinCall() {
+      const raw = (peerCode.value || "").trim();
+
+      if (!raw) {
+        alert("Pega el JSON generado por la otra persona antes de unirte.");
+        return;
+      }
+
+      try {
+        const payload = JSON.parse(raw);
+        if (!payload || !payload.type || !payload.sdp) {
+          throw new Error("JSON inválido");
+        }
+
+        await startCamera();
+        const pc = ensurePeerConnection();
+
+        if (payload.type === "offer") {
+          await pc.setRemoteDescription(new RTCSessionDescription({
+            type: "offer",
+            sdp: payload.sdp
+          }));
+
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+
+          peerCode.value = JSON.stringify({
+            type: "answer",
+            sdp: answer.sdp
+          }, null, 2);
+
+          return;
+        }
+
+        if (payload.type === "answer") {
+          await pc.setRemoteDescription(new RTCSessionDescription({
+            type: "answer",
+            sdp: payload.sdp
+          }));
+          return;
+        }
+
+        alert("El JSON no tiene un formato de WebRTC válido.");
+      } catch (error) {
+        alert("No se pudo procesar el código. Comprueba que el JSON sea válido.");
+      }
+    }
+
+    document.getElementById("cameraBtn").addEventListener("click", startCamera);
+    document.getElementById("createCodeBtn").addEventListener("click", createCode);
+    document.getElementById("joinBtn").addEventListener("click", joinCall);
+
+    document.getElementById("muteBtn").addEventListener("click", () => {
+      if (!localStream) {
+        alert("Primero activa tu cámara para poder silenciar el audio.");
+        return;
+      }
+
+      isMuted = !isMuted;
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = !isMuted;
+      });
+
+      document.getElementById("muteBtn").textContent = isMuted ? "Unmute" : "Mute";
+    });
+
+    document.getElementById("hangupBtn").addEventListener("click", () => {
+      if (localStream) {
+        localStream.getTracks().forEach((track) => track.stop());
+        localStream = null;
+      }
+
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+
+      localVideo.srcObject = null;
+      remoteVideo.srcObject = null;
+      peerCode.value = "";
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && document.activeElement === emailInput) {
+        event.preventDefault();
+        loginForm.requestSubmit();
+      }
+    });
+
+    renderApp();
+  </script>
+</body>
+</html>
