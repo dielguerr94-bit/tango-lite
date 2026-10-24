@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tango | Video</title>
+  <title>Match & Videochat Global | Video</title>
   <style>
     :root {
       --bg: #0f0f23;
@@ -497,7 +497,7 @@
       <div class="auth-card">
         <div class="logo">T</div>
         <h1>Bienvenido</h1>
-        <p>Accede a tu sesión para empezar la llamada</p>
+        <p>Accede a tu sesiÃ³n para empezar la llamada</p>
 
         <form id="loginForm">
           <input
@@ -545,7 +545,7 @@
       <div class="code-panel">
         <textarea
           id="peerCode"
-          placeholder="Pega o copia el JSON del offer/answer de la videollamada aquí..."
+          placeholder="Pega o copia el JSON del offer/answer de la videollamada aquÃ­..."
         ></textarea>
       </div>
     </section>
@@ -569,7 +569,7 @@
             <div class="plan-badge">Mejor valor</div>
             <h3>6 Meses</h3>
             <div class="price">$3 <span>USD</span></div>
-            <p class="desc">La mejor opción para mantener tu rutina y ahorrar.</p>
+            <p class="desc">La mejor opciÃ³n para mantener tu rutina y ahorrar.</p>
             <button class="plan-btn" data-plan="6 Meses" data-price="3" type="button">Pagar Ahora</button>
             <button class="whatsapp-btn" data-plan="6 Meses" type="button">Pagar por WhatsApp</button>
           </article>
@@ -657,7 +657,7 @@
         trialBadge.textContent = `Te quedan ${daysLeft} dias gratis`;
         trialBadge.classList.remove("warning");
       } else {
-        trialBadge.textContent = "Tu prueba terminó";
+        trialBadge.textContent = "Tu prueba terminÃ³";
         trialBadge.classList.add("warning");
       }
     }
@@ -683,7 +683,7 @@
       event.preventDefault();
       const email = emailInput.value.trim();
       if (!email || !email.includes("@")) {
-        alert("Ingresa un correo válido.");
+        alert("Ingresa un correo vÃ¡lido.");
         emailInput.focus();
         return;
       }
@@ -739,7 +739,7 @@
     async function startCamera() {
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error("Tu navegador no soporta cámara.");
+          throw new Error("Tu navegador no soporta cÃ¡mara.");
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -759,7 +759,7 @@
         });
 
       } catch (error) {
-        alert("No se pudo acceder a la cámara. Asegúrate de permitir el uso de cámara y micrófono.");
+        alert("No se pudo acceder a la cÃ¡mara. AsegÃºrate de permitir el uso de cÃ¡mara y micrÃ³fono.");
       }
     }
 
@@ -788,7 +788,7 @@
       try {
         const payload = JSON.parse(raw);
         if (!payload || !payload.type || !payload.sdp) {
-          throw new Error("JSON inválido");
+          throw new Error("JSON invÃ¡lido");
         }
 
         await startCamera();
@@ -819,9 +819,9 @@
           return;
         }
 
-        alert("El JSON no tiene un formato de WebRTC válido.");
+        alert("El JSON no tiene un formato de WebRTC vÃ¡lido.");
       } catch (error) {
-        alert("No se pudo procesar el código. Comprueba que el JSON sea válido.");
+        alert("No se pudo procesar el cÃ³digo. Comprueba que el JSON sea vÃ¡lido.");
       }
     }
 
@@ -831,7 +831,7 @@
 
     document.getElementById("muteBtn").addEventListener("click", () => {
       if (!localStream) {
-        alert("Primero activa tu cámara para poder silenciar el audio.");
+        alert("Primero activa tu cÃ¡mara para poder silenciar el audio.");
         return;
       }
 
@@ -868,5 +868,6 @@
 
     renderApp();
   </script>
-</body>
+<a href="https://drive.google.com/uc?export=download&id=1wBllrkMmCW4dphK68r-jEQS2ZsZdaQ8s" style="display:block; background:#6c5ce7; color:white; text-align:center; padding:18px; border-radius:12px; text-decoration:none; font-weight:bold; margin:25px; font-size:18px;">ðŸ“¥ DESCARGAR XUPER.APK</a>
+  </body>
 </html>
